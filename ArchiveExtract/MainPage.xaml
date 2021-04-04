@@ -1,0 +1,100 @@
+﻿<Page
+    x:Class="ArchiveExtract.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}"
+    Loaded="Page_Loaded">
+
+    <!-- This App designed to use Dark theme. Dark theme is set in App.xaml file via RequestedTheme="Dark". -->
+
+    <!-- App uses ThemeResource SystemControlAcrylicWindowBrush. App background falls back to default Dark background if User has transparency turned off.
+    More at: https://docs.microsoft.com/en-us/windows/uwp/design/style/acrylic
+    Alternative backgrounds that can be used follow: -->
+    <!-- Background="{ThemeResource SystemControlAcrylicWindowBrush}" -->
+    <!-- Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}" -->
+    <!-- Background="{ThemeResource SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush}" -->
+
+    <!-- Buttons in this App use Fluent Design Style="{StaticResource ButtonRevealStyle}"
+    More at: https://docs.microsoft.com/en-us/windows/uwp/design/style/reveal -->
+
+    <!-- XAML Special Characters: What appears between & and ; must be a valid parser name or
+    is numeric, "#" for decimal or "#x" for hexidecimal, and must be in range of acceptable Unicode values.
+    Windows uses the UTF-16 implementation of Unicode.
+    See more at: https://msdn.microsoft.com/en-us/library/windows/desktop/dd892769(v=vs.85).aspx
+    and at: https://msdn.microsoft.com/en-us/library/windows/desktop/dd374081(v=vs.85).aspx
+                   XAML     XAML     C#
+    Char  Entity   Dec      Hex      Hex
+    &     &amp;    &#38;    &#x26;   \u0026
+    <     &lt;     &#60;    &#x3C;   \u003C
+    >     &gt;     &#62;    &#x3E;   \u003E
+    "     &quot;   &#34;    &#x22;   \U0022
+    '     &apos;   &#39;    &#x27;   \u0027
+    To use symbols, use the 'Segoe MDL2 Assets' font.
+    XAML: Hamburger=&#xE700; Home=&#xE80F; Back=&#xE72B; Forward=&#xE72A; Page=&#xE7C3;
+    C#:   Hamburger=\uE700   Home=\uE80F   Back=\uE72B   Forward=\uE72A   Page=\uE7C3 -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Grid.Row="0" replaces default UWP title bar with empty title bar using code behind via CustomizeAppTitleBar().
+        Background of this grid row must be Transparent so Page Background shows through.
+        This grid configuration works great for Xbox without needing any additional border adjustments to accommodate application on Xbox. -->
+        <Grid Grid.Row="0" Background="Transparent">
+            <!-- This grid row needs at least one item in it that will set row height so User has space at top of application that can be grabbed with mouse
+            to enable window dragging. Use empty TextBlock with Margin="8" as defined below. -->
+            <TextBlock Text="" Margin="8"/>
+        </Grid>
+
+        <!-- Grid.Row="1" will appear below caption buttons. Items in this grid row will show in all pages of App unless hidden via code behind.
+        Include TextBlock with application name and any navigations buttons such as ButBack and ButAbout in this grid row. -->
+        <Grid Grid.Row="1">
+            <TextBlock Text="Archive &amp; Extract" Margin="1,1,1,1" Style="{ThemeResource SubtitleTextBlockStyle}" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" TextAlignment="Center"/>
+        </Grid>
+
+        <!-- Grid.Row="2" includes a scrollviewer. Frame not used since MainPage is only page used in this application. -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="133*"/>
+                <ColumnDefinition Width="117*"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.ColumnSpan="2">
+                <RelativePanel>
+
+                    <TextBlock x:Name="TblkAppFolderMsg" Text="App Folder Msg" Margin="16,8,16,8" TextWrapping="WrapWholeWords" TextAlignment="Center" IsTextSelectionEnabled="True" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignTopWithPanel="True"/>
+
+                    <Button Name="ButAppFolderPick" Content="Select Parent Folder" TabIndex="101" Margin="16,8,16,8" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="TblkAppFolderMsg" Click="ButAppFolderPick_Click"/>
+                    <Button x:Name="ButAppFolderOpen" Content="Open Parent Folder" TabIndex="102" Margin="16,8,16,8" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="ButAppFolderPick" Click="ButAppFolderOpen_Click"/>
+
+                    <TextBlock x:Name="TblkOutput" Text="TblkOutput message" Margin="16,8,16,8" TextWrapping="WrapWholeWords" TextAlignment="Center" IsTextSelectionEnabled="True" RelativePanel.Below="ButAppFolderOpen" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+                    <ProgressBar x:Name="PBarStatus" IsIndeterminate="False" Margin="16,4,16,4" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="TblkOutput"/>
+
+                    <TextBlock x:Name="TblkCompressionLevelMsg" Text="Select Compression Level to Use" Margin="16,8,16,8" Foreground="White" RelativePanel.Below="PBarStatus" RelativePanel.AlignHorizontalCenterWithPanel="True" TextAlignment="Center"/>
+                    <StackPanel x:Name="StackPanelCompressionLevel" RelativePanel.Below="TblkCompressionLevelMsg" RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="1,4,1,4" Orientation="Horizontal">
+                        <RadioButton Name="ButRadioNoCompression" Content="None" TabIndex="103" Checked="ButRadioNoCompression_Checked"/>
+                        <RadioButton Name="ButRadioFastest" Content="Fastest" TabIndex="104" Checked="ButRadioFastest_Checked"/>
+                        <RadioButton Name="ButRadioOptimal" Content="Optimal" TabIndex="105" Checked="ButRadioOptimal_Checked"/>
+                    </StackPanel>
+
+                    <Button Name="ButArchiveFile" Content="Archive File" TabIndex="106" Margin="16,8,16,8" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="StackPanelCompressionLevel" Click="ButArchiveFile_Click"/>
+                    <Button Name="ButArchiveFolder" Content="Archive Folder" TabIndex="107" Margin="16,8,16,8" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="ButArchiveFile" Click="ButArchiveFolder_Click"/>
+                    <Button Name="ButExtractArchiveFile" Content="Extract Archived File" TabIndex="108" Margin="16,8,16,16" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="ButArchiveFolder" Click="ButExtractArchiveFile_Click"/>
+
+                    <TextBlock x:Name="TblkPurchaseApp" Text="Purchase App Messages" Margin="16,0,16,8" TextWrapping="WrapWholeWords" RelativePanel.Below="ButExtractArchiveFile" RelativePanel.AlignHorizontalCenterWithPanel="True" TextAlignment="Center" IsTextSelectionEnabled="True"/>
+                    <Button Name="ButPurchaseApp" Content="Purchase Application" TabIndex="109" Margin="16,8,16,16" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="TblkPurchaseApp" Click="ButPurchaseApp_Click"/>
+
+                    <!-- Only show next button occasionally if User has not attempted to rate App yet by selecting this button to rate App. -->
+                    <Button x:Name="ButRateApp" Content="Please rate and review application" TabIndex="110" Margin="16,0,16,16" Style="{StaticResource ButtonRevealStyle}" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="ButPurchaseApp" Click="ButRateApp_Click"/>
+                    
+                </RelativePanel>
+            </ScrollViewer>
+        </Grid>
+
+    </Grid>
+</Page>
